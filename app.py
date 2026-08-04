@@ -1,16 +1,7 @@
 from flask import Flask, render_template, request
-import pickle
-import os
-
+from src.model_loader import load_models
 app = Flask(__name__)
-
-# -----------------------------
-# Load Model Files
-# -----------------------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-movies = pickle.load(open(os.path.join(BASE_DIR, "model", "movie_list.pkl"), "rb"))
-similarity = pickle.load(open(os.path.join(BASE_DIR, "model", "similarity.pkl"), "rb"))
+movies, similarity = load_models()
 
 # -----------------------------
 # Recommendation Function
