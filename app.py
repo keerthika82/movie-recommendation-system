@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 from src.model_loader import load_models
 
@@ -18,9 +18,8 @@ movies, vectors = load_models()
 
 def recommend(movie):
 
-    movie = movie.lower()
+    movie = movie.lower().strip()
 
-    # Find matching movie
     matches = movies[
         movies["title"].str.lower() == movie
     ]
@@ -30,13 +29,11 @@ def recommend(movie):
 
     movie_index = matches.index[0]
 
-    # Calculate similarity only for the selected movie
     similarity_scores = cosine_similarity(
         vectors[movie_index],
         vectors
     ).flatten()
 
-    # Get top 5 movies
     movie_indices = similarity_scores.argsort()[-6:][::-1]
 
     recommendations = []
@@ -44,6 +41,7 @@ def recommend(movie):
     for index in movie_indices:
 
         if index != movie_index:
+
             recommendations.append(
                 movies.iloc[index]["title"]
             )
@@ -76,6 +74,49 @@ def home():
         movie_names=movie_names,
         recommendations=recommendations
     )
+
+
+# --------------------------------
+# API for GitHub Pages
+# --------------------------------
+
+@app.route("/api/recommend", methods=["POST"])
+def api_recommend():
+
+    data = request.get_json()
+
+    if not data or "movie" not in data:
+
+        return jsonify({
+            "recommendations": [],
+            "error": "Movie name is required"
+        }), 400
+
+    movie = data["movie"]
+
+    recommendations = recommend(movie)
+
+    response = jsonify({
+        "recommendations": recommendations
+    })
+
+    return response
+
+
+# --------------------------------
+# Allow GitHub Pages to access API
+# --------------------------------
+
+@app.after_request
+def add_cors_headers(response):
+
+    response.headers["Access-Control-Allow-Origin"] = "*"
+
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+
+    return response
 
 
 # --------------------------------
