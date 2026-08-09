@@ -1,40 +1,63 @@
 from flask import Flask, render_template, request
-from src.model_loader import load_models
-app = Flask(__name__)
-movies, similarity = load_models()
 
-# -----------------------------
+from src.model_loader import load_models
+
+from sklearn.metrics.pairwise import cosine_similarity
+
+
+app = Flask(__name__)
+
+
+# Load movie data and vectors
+movies, vectors = load_models()
+
+
+# --------------------------------
 # Recommendation Function
-# -----------------------------
+# --------------------------------
+
 def recommend(movie):
+
     movie = movie.lower()
 
     # Find matching movie
-    matches = movies[movies['title'].str.lower() == movie]
+    matches = movies[
+        movies["title"].str.lower() == movie
+    ]
 
     if matches.empty:
         return []
 
     movie_index = matches.index[0]
 
-    distances = similarity[movie_index]
+    # Calculate similarity only for the selected movie
+    similarity_scores = cosine_similarity(
+        vectors[movie_index],
+        vectors
+    ).flatten()
 
-    movie_list = sorted(
-        list(enumerate(distances)),
-        reverse=True,
-        key=lambda x: x[1]
-    )[1:6]
+    # Get top 5 movies
+    movie_indices = similarity_scores.argsort()[-6:][::-1]
 
     recommendations = []
 
-    for i in movie_list:
-        recommendations.append(movies.iloc[i[0]].title)
+    for index in movie_indices:
+
+        if index != movie_index:
+            recommendations.append(
+                movies.iloc[index]["title"]
+            )
+
+        if len(recommendations) == 5:
+            break
 
     return recommendations
 
-# -----------------------------
+
+# --------------------------------
 # Home Page
-# -----------------------------
+# --------------------------------
+
 @app.route("/", methods=["GET", "POST"])
 def home():
 
@@ -54,8 +77,14 @@ def home():
         recommendations=recommendations
     )
 
-# -----------------------------
+
+# --------------------------------
 # Run App
-# -----------------------------
+# --------------------------------
+
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(
+        host="0.0.0.0",
+        port=5000
+    )
