@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Movie Recommendation System</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 36px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            background: #ff4b2b;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #message {
+            text-align: center;
+            margin: 15px 0;
+            color: #ddd;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results h2 {
+            margin-bottom: 15px;
+        }
+
+        .movie {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            font-size: 17px;
+        }
+
+        .movie-number {
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <h1>🎬 Movie Recommendation System</h1>
+
+        <p class="subtitle">
+            Enter a movie name and discover similar movies
+        </p>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="movieInput"
+                placeholder="Enter movie name..."
+            >
+
+            <button onclick="getRecommendations()">
+                Recommend
+            </button>
+
+        </div>
+
+
+        <div id="message"></div>
+
+
+        <div class="results">
+
+            <h2 id="resultTitle"></h2>
+
+            <div id="recommendations"></div>
+
+        </div>
+
+
+        <div class="footer">
+            Powered by Python, Flask, NLP & Scikit-learn
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const API_URL =
+            "https://movie-recommendation-system-azri.onrender.com/api/recommend";
+
+
+        async function getRecommendations() {
+
+            const movieInput =
+                document.getElementById("movieInput");
+
+            const movie =
+                movieInput.value.trim();
+
+
+            const message =
+                document.getElementById("message");
+
+            const recommendations =
+                document.getElementById("recommendations");
+
+            const resultTitle =
+                document.getElementById("resultTitle");
+
+
+            if (!movie) {
+
+                message.textContent =
+                    "Please enter a movie name.";
+
+                recommendations.innerHTML = "";
+
+                resultTitle.textContent = "";
+
+                return;
+            }
+
+
+            message.textContent =
+                "Finding recommendations...";
+
+            recommendations.innerHTML = "";
+
+            resultTitle.textContent = "";
+
+
+            try {
+
+                const response =
+                    await fetch(API_URL, {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            movie: movie
+                        })
+
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error || "Something went wrong."
+                    );
+
+                }
+
+
+                message.textContent = "";
+
+
+                if (
+                    !data.recommendations ||
+                    data.recommendations.length === 0
+                ) {
+
+                    resultTitle.textContent =
+                        "No recommendations found.";
+
+                    return;
+                }
+
+
+                resultTitle.textContent =
+                    "Recommended Movies";
+
+
+                data.recommendations.forEach(
+                    (movieName, index) => {
+
+                        const movieElement =
+                            document.createElement("div");
+
+                        movieElement.className =
+                            "movie";
+
+                        movieElement.innerHTML =
+                            `<span class="movie-number">
+                                ${index + 1}.
+                             </span>
+                             ${movieName}`;
+
+                        recommendations.appendChild(
+                            movieElement
+                        );
+
+                    }
+                );
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+                message.textContent =
+                    "Unable to connect to the recommendation server.";
+
+            }
+
+        }
+
+
+        document
+            .getElementById("movieInput")
+            .addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (event.key === "Enter") {
+
+                        getRecommendations();
+
+                    }
+
+                }
+            );
+
+    </script>
+
+</body>
+
+</html>
