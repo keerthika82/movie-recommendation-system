@@ -1,22 +1,26 @@
 # 🎬 Movie Recommendation System
 
-A professional Movie Recommendation System built using **Python**, **Flask**, and **Machine Learning (Content-Based Filtering)**.
+A content-based movie recommendation system built using Python, Flask, NLP, and Scikit-learn.
 
-This application recommends movies based on their similarity using genres, keywords, cast, director, and movie overview.
+## 🚀 Live Demo
 
----
+👉 [Open Movie Recommendation System](https://movie-recommendation-system-azri.onrender.com)
 
-## 📌 Features
+## 📌 Project Overview
 
-- 🎥 Movie Recommendation
-- 🔍 Select a movie from the dropdown
-- 🤖 Content-Based Filtering
-- 📊 Cosine Similarity Algorithm
-- 🌐 Flask Web Application
-- 🎨 Responsive User Interface
-- ⚡ Fast Recommendations
+This project recommends movies based on the similarity between movie descriptions, genres, keywords, cast, and directors.
 
----
+The system uses Natural Language Processing and cosine similarity to identify movies that are similar to the movie selected by the user.
+
+## ✨ Features
+
+- 🎬 Movie recommendation system
+- 🔍 Search/select movies
+- 🤖 Content-based recommendation
+- 🧠 NLP-based text processing
+- 📊 Cosine similarity
+- 🌐 Flask web application
+- 🚀 Deployed on Render
 
 ## 🛠️ Technologies Used
 
@@ -25,136 +29,26 @@ This application recommends movies based on their similarity using genres, keywo
 - Pandas
 - NumPy
 - Scikit-learn
-- HTML5
-- CSS3
+- NLTK
+- HTML
+- CSS
 - JavaScript
-- Git
 - GitHub
+- Render
 
----
-
-## 📂 Project Structure
+## 🧠 How It Works
 
 ```text
-movie-recommendation-system/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-│
-├── data/
-├── model/
-├── src/
-├── static/
-└── templates/
-```
-
----
-
-## ⚙️ Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/movie-recommendation-system.git
-```
-
-Move into the project:
-
-```bash
-cd movie-recommendation-system
-```
-
-Create a virtual environment:
-
-```bash
-python -m venv venv
-```
-
-Activate it:
-
-Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Run the application:
-
-```bash
-python app.py
-```
-
-Open:
-
-```
-http://127.0.0.1:5000
-```
-
----
-
-## 🧠 Machine Learning Workflow
-
-1. Load Movie Dataset
-2. Merge Movie and Credits Dataset
-3. Data Cleaning
-4. Feature Engineering
-5. Count Vectorization
-6. Cosine Similarity
-7. Recommendation Generation
-
----
-
-## 📸 Screenshots
-
-### Home Page
-
-_Add a screenshot here_
-
-### Recommendations
-
-_Add a screenshot here_
-
----
-
-## 🚀 Future Improvements
-
-- Movie Posters
-- Search Suggestions
-- User Login
-- Favorites
-- Ratings
-- Collaborative Filtering
-- TMDB API Integration
-- Deployment on Render
-
----
-
-## 👨‍💻 Author
-
-**Shahid**
-
-GitHub:
-https://github.com/YOUR_USERNAME
-
----
-
-## ⭐ Support
-
-If you found this project helpful, consider giving it a ⭐ on GitHub.
-## Generate the Recommendation Model
-
-After cloning the repository, generate the recommendation model by running:
-
-```bash
-python src/preprocess.py
-```
-
-This creates the required files inside the `model/` folder.
+Movie Dataset
+      ↓
+Data Preprocessing
+      ↓
+NLP / Text Processing
+      ↓
+Feature Extraction
+      ↓
+Movie Vectors
+      ↓
+Cosine Similarity
+      ↓
+Top 5 Similar Movies
